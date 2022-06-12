@@ -1,7 +1,10 @@
 import os
 import gzip
+import parameters
 import numpy as np
+import torch
 from torch.utils.data import Dataset
+from torchvision import datasets, transforms
 class ImageList(Dataset):
 
     def __init__(self, path, kind, transform=None):
@@ -33,3 +36,21 @@ def load_data(path, kind='train'):
     print('The size of %s set: %d'%(kind, len(labels)))
 
     return images, labels
+
+def load_oracle_mnist_data(batch_size):
+    train_data = ImageList(path=parameters.path, kind='train',
+                           transform=transforms.Compose([
+                               transforms.ToTensor(),
+                               transforms.Normalize((0.5,), (0.5,))
+                           ]))
+
+    test_data = ImageList(path=parameters.path, kind='t10k',
+                          transform=transforms.Compose([
+                              transforms.ToTensor(),
+                              transforms.Normalize((0.5,), (0.5,))
+                          ]))
+
+    train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, drop_last=True)
+    test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False)
+
+    return train_loader,test_loader

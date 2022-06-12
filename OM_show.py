@@ -5,9 +5,7 @@ show the oracle image.
 import OM_reader
 import parameters
 import torch
-import numpy as np
-from torchvision import datasets, transforms
-from OM_reader import ImageList
+import OM_reader
 from matplotlib import pyplot as plt
 
 def get_oracle_mnist_labels(labels,language="CN"):  #@save
@@ -45,15 +43,10 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):  #@save
     return axes
 
 if __name__ == "__main__":
-    train_data = ImageList(path=parameters.path, kind='train',
-                           transform=transforms.Compose([
-                               transforms.ToTensor(),
-                               transforms.Normalize((0.5,), (0.5,))
-                           ]))
-
-    train_loader = torch.utils.data.DataLoader(train_data, batch_size=18, shuffle=True, drop_last=True)
+    train_loader,test_loader = OM_reader.load_oracle_mnist_data(18)
 
     imgs,labels = next(iter(train_loader))
     print("imgs.shape:" + str(imgs.shape))
     print("labels.shape:" + str(labels.shape))
+    
     show_images(imgs.reshape(18, 28, 28), 2, 9, titles=get_oracle_mnist_labels(labels))
