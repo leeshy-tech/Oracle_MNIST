@@ -5,9 +5,9 @@ show the oracle image.
 import OM_reader
 import parameters
 import torch
-from torch.utils.data import Dataset
-from torchvision import datasets, transforms
 import numpy as np
+from torchvision import datasets, transforms
+from OM_reader import ImageList
 from matplotlib import pyplot as plt
 
 def get_oracle_mnist_labels(labels,language="CN"):  #@save
@@ -43,23 +43,6 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):  #@save
 
     plt.show()
     return axes
-
-class ImageList(Dataset):
-
-    def __init__(self, path, kind, transform=None):
-        (train_set, train_labels) = OM_reader.load_data(path, kind)
-        self.train_set = train_set
-        self.train_labels = train_labels
-        self.transform = transform
-
-    def __getitem__(self, index):
-        img, target = self.train_set[index], int(self.train_labels[index])
-        if self.transform is not None:
-            img = self.transform(np.array(img))
-        return img, target
-
-    def __len__(self):
-        return len(self.train_set)
 
 if __name__ == "__main__":
     train_data = ImageList(path=parameters.path, kind='train',

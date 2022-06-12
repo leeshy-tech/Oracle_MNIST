@@ -1,8 +1,25 @@
-def load_data(path, kind='train'):
-    import os
-    import gzip
-    import numpy as np
+import os
+import gzip
+import numpy as np
+from torch.utils.data import Dataset
+class ImageList(Dataset):
 
+    def __init__(self, path, kind, transform=None):
+        (train_set, train_labels) = load_data(path, kind)
+        self.train_set = train_set
+        self.train_labels = train_labels
+        self.transform = transform
+
+    def __getitem__(self, index):
+        img, target = self.train_set[index], int(self.train_labels[index])
+        if self.transform is not None:
+            img = self.transform(np.array(img))
+        return img, target
+
+    def __len__(self):
+        return len(self.train_set)
+
+def load_data(path, kind='train'):
     """Load Oracle-MNIST data from `path`"""
     labels_path = os.path.join(path, '%s-labels-idx1-ubyte.gz' % kind)
     images_path = os.path.join(path, '%s-images-idx3-ubyte.gz' % kind)
