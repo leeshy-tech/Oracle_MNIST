@@ -8,7 +8,7 @@ import torch
 import OM_reader
 from matplotlib import pyplot as plt
 
-def get_oracle_mnist_labels(labels,language="CN"):  #@save
+def get_oracle_mnist_labels(labels,language="CN"):
     """返回Oracle-MNIST数据集的中文或英文文本标签"""
     text_labels_en = ['big', 'sun', 'moon', 'cattle', 'next',
                    'field', 'not', 'arrow', 'time', 'wood']
@@ -17,7 +17,7 @@ def get_oracle_mnist_labels(labels,language="CN"):  #@save
     text_labels = text_labels_en if language=="en" else text_labels_CN
     return [text_labels[int(i)] for i in labels]
 
-def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):  #@save
+def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
     """绘制图像列表"""
     # 设置 中文title显示
     plt.rcParams['font.sans-serif']=['SimHei']
@@ -48,5 +48,5 @@ if __name__ == "__main__":
     imgs,labels = next(iter(train_loader))
     print("imgs.shape:" + str(imgs.shape))
     print("labels.shape:" + str(labels.shape))
-    
+
     show_images(imgs.reshape(18, 28, 28), 2, 9, titles=get_oracle_mnist_labels(labels))
