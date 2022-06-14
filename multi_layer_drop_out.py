@@ -8,10 +8,6 @@ from d2l import torch as d2l
 from matplotlib import pyplot as plt
 from multi_layer_perceptrons import OM_train_GPU,OM_predict
 
-def init_weights(m):
-        if type(m) == nn.Linear:
-            nn.init.normal_(m.weight, std=0.01)
-
 if __name__ == "__main__":
     batch_size, lr, num_epochs = 256, 0.1, 100
     dropout1, dropout2 = 0.2, 0.5
@@ -30,7 +26,6 @@ if __name__ == "__main__":
         nn.Linear(256, 10)
     )
 
-    net.apply(init_weights)
     trainer = torch.optim.SGD(net.parameters(), lr=lr)
 
     train_loader,test_loader = OM_reader.load_oracle_mnist_data(batch_size)
