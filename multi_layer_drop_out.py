@@ -31,7 +31,6 @@ if __name__ == "__main__":
     )
 
     net.apply(init_weights)
-    loss = nn.CrossEntropyLoss(reduction='none')
     trainer = torch.optim.SGD(net.parameters(), lr=lr)
 
     train_loader,test_loader = OM_reader.load_oracle_mnist_data(batch_size)
