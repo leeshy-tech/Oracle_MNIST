@@ -42,10 +42,10 @@ def OM_train_GPU(net, train_iter, test_iter, num_epochs, lr, device):
                 animator.add(epoch + (i + 1) / num_batches,
                              (train_l, train_acc, None))
             #plt.pause(0.1)
-
+        print(f"epoch:{epoch}/{num_epochs}")
         test_acc = d2l.evaluate_accuracy_gpu(net, test_iter)
         animator.add(epoch + 1, (None, None, test_acc))
-        
+
     print(f'loss {train_l:.3f}, train acc {train_acc:.3f}, '
           f'test acc {test_acc:.3f}')
     print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec '
