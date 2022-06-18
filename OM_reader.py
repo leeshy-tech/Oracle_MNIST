@@ -3,24 +3,36 @@ import gzip
 import parameters
 import numpy as np
 import torch
-from torch.utils.data import Dataset
+from PIL import Image
+from torch.utils.data import Dataset,DataLoader
 from torchvision import datasets, transforms
-class ImageList(Dataset):
-
+class OracleMNIST(Dataset):
     def __init__(self, path, kind, transform=None):
-        (train_set, train_labels) = load_data(path, kind)
-        self.train_set = train_set
-        self.train_labels = train_labels
+        (data, labels) = load_data(path, kind)
+        self.data = data
+        self.labels = labels
         self.transform = transform
 
-    def __getitem__(self, index):
-        img, target = self.train_set[index], int(self.train_labels[index])
-        if self.transform is not None:
-            img = self.transform(np.array(img))
-        return img, target
+    def __getitem__(self, index: int):
+        """
+        Args:
+            index (int): Index
 
-    def __len__(self):
-        return len(self.train_set)
+        Returns:
+            tuple: (image, target) where target is index of the target class.
+        """
+        img, labels = self.data[index], int(self.labels[index])
+
+        # doing this so that it is consistent with all other datasets
+        # to return a PIL Image
+        img = Image.fromarray(img, mode='L')
+        if self.transform is not None:
+            img = self.transform(img)
+
+        return img, labels
+
+    def __len__(self) -> int:
+        return len(self.data)
 
 def load_data(path, kind='train'):
     """Load Oracle-MNIST data from `path`"""
@@ -37,20 +49,17 @@ def load_data(path, kind='train'):
 
     return images, labels
 
-def load_oracle_mnist_data(batch_size):
-    train_data = ImageList(path=parameters.path, kind='train',
-                           transform=transforms.Compose([
-                               transforms.ToTensor(),
-                               transforms.Normalize((0.5,), (0.5,))
-                           ]))
+def load_oracle_mnist_data(batch_size,resize=None):
+    trans = [transforms.ToTensor()]
+    if resize:
+        trans.insert(0, transforms.Resize(resize))
+    trans = transforms.Compose(trans)
+    mnist_train = OracleMNIST(
+        path="./oracle_minist_data", kind='train', transform=trans)
+    mnist_test = OracleMNIST(
+        path="./oracle_minist_data", kind='t10k', transform=trans)
+    return (DataLoader(mnist_train, batch_size, shuffle=True),
+            DataLoader(mnist_test, batch_size, shuffle=False)
+            )
 
-    test_data = ImageList(path=parameters.path, kind='t10k',
-                          transform=transforms.Compose([
-                              transforms.ToTensor(),
-                              transforms.Normalize((0.5,), (0.5,))
-                          ]))
-
-    train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, drop_last=True)
-    test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, shuffle=False)
-
-    return train_loader,test_loader
+train_loader,test_loader = load_oracle_mnist_data(18)
