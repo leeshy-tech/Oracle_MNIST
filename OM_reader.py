@@ -61,5 +61,3 @@ def load_oracle_mnist_data(batch_size,resize=None):
     return (DataLoader(mnist_train, batch_size, shuffle=True),
             DataLoader(mnist_test, batch_size, shuffle=False)
             )
-
-train_loader,test_loader = load_oracle_mnist_data(18)
