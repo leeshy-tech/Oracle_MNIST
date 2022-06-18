@@ -56,9 +56,9 @@ if __name__ == "__main__":
                         nn.AdaptiveAvgPool2d((1,1)),
                         nn.Flatten(), nn.Linear(512, 10))
 
-    lr, num_epochs, batch_size = 0.1, 10, 256
+    lr, num_epochs, batch_size = 0.1, 15, 64
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     train_loader, test_loader = OM_reader.load_oracle_mnist_data(batch_size, resize=96)
-    OM_train_GPU(net, train_loader, test_loader, num_epochs, lr, device)
+    OM_train_GPU(net, train_loader, test_loader, num_epochs, lr, device,ylim=[0,1])
     OM_predict(net, test_loader,device,size=96)
     plt.show()
