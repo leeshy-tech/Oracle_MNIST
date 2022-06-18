@@ -8,7 +8,7 @@ from d2l import torch as d2l
 from matplotlib import pyplot as plt
 from OM_show import get_oracle_mnist_labels,show_images
 
-def OM_train_GPU(net, train_iter, test_iter, num_epochs, lr, device):
+def OM_train_GPU(net, train_iter, test_iter, num_epochs, lr, device,ylim=None):
     """用GPU训练模型"""
     def init_weights(m):
         if type(m) == nn.Linear or type(m) == nn.Conv2d:
@@ -18,7 +18,7 @@ def OM_train_GPU(net, train_iter, test_iter, num_epochs, lr, device):
     net.to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr)
     loss = nn.CrossEntropyLoss()
-    animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs],
+    animator = d2l.Animator(xlabel='epoch', xlim=[1, num_epochs],ylim=ylim,
                             legend=['train loss', 'train acc', 'test acc'])
     timer, num_batches = d2l.Timer(), len(train_iter)
     for epoch in range(num_epochs):
