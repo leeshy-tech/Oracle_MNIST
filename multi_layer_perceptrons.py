@@ -45,19 +45,20 @@ def OM_train_GPU(net, train_iter, test_iter, num_epochs, lr, device):
 
         test_acc = d2l.evaluate_accuracy_gpu(net, test_iter)
         animator.add(epoch + 1, (None, None, test_acc))
+        plt.show()
     print(f'loss {train_l:.3f}, train acc {train_acc:.3f}, '
           f'test acc {test_acc:.3f}')
     print(f'{metric[2] * num_epochs / timer.sum():.1f} examples/sec '
           f'on {str(device)}')
 
-def OM_predict(net, test_iter,device, n=7):
+def OM_predict(net, test_iter,device, n=7,size=28):
     """Predict labels"""
     for X, y in test_iter:
         break
     trues = get_oracle_mnist_labels(y)
     preds = get_oracle_mnist_labels(d2l.argmax(net(X.to(device)).to(device), axis=1))
     titles = [true +'\n' + pred for true, pred in zip(trues, preds)]
-    show_images(d2l.reshape(X[0:n], (n, 28, 28)), 1, n, titles=titles[0:n])
+    show_images(d2l.reshape(X[0:n], (n, size, size)), 1, n, titles=titles[0:n])
 
 if __name__ == "__main__":
     batch_size, lr, num_epochs = 256, 0.1, 100
