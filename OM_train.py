@@ -1,15 +1,13 @@
 """
-多层感知机
+train model
 """
 import torch
-import OM_reader
 from torch import nn
 from d2l import torch as d2l
-from matplotlib import pyplot as plt
 from OM_show import get_oracle_mnist_labels,show_images
 
-def OM_train_GPU(net, train_iter, test_iter, num_epochs, lr, device,ylim=None):
-    """用GPU训练模型"""
+def OM_train_device(net, train_iter, test_iter, num_epochs, lr, device,ylim=None):
+    """用device训练模型"""
     def init_weights(m):
         if type(m) == nn.Linear or type(m) == nn.Conv2d:
             nn.init.xavier_uniform_(m.weight)
@@ -59,21 +57,3 @@ def OM_predict(net, test_iter,device, n=7,size=28):
     preds = get_oracle_mnist_labels(d2l.argmax(net(X.to(device)).to(device), axis=1))
     titles = [true +'\n' + pred for true, pred in zip(trues, preds)]
     show_images(d2l.reshape(X[0:n], (n, size, size)), 1, n, titles=titles[0:n])
-
-if __name__ == "__main__":
-    batch_size, lr, num_epochs = 256, 0.1, 100
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    net = nn.Sequential(nn.Flatten(),
-                        nn.Linear(784, 256),
-                        nn.ReLU(),
-                        nn.Linear(256, 10))
-
-    net.apply(init_weights)
-    loss = nn.CrossEntropyLoss(reduction='none')
-    trainer = torch.optim.SGD(net.parameters(), lr=lr)
-
-    train_loader,test_loader = OM_reader.load_oracle_mnist_data(batch_size)
-    OM_train_GPU(net, train_loader, test_loader, num_epochs, lr, device)
-    OM_predict(net, test_loader,device)
-    plt.show()

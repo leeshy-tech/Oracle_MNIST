@@ -4,7 +4,7 @@ from torch.nn import functional as F
 from d2l import torch as d2l
 import OM_reader
 from matplotlib import pyplot as plt
-from multi_layer_perceptrons import OM_train_GPU,OM_predict
+from OM_train import OM_train_device,OM_predict
 
 class Residual(nn.Module):
     def __init__(self, input_channels, num_channels,
@@ -43,6 +43,9 @@ def resnet_block(input_channels, num_channels, num_residuals,
 
 
 if __name__ == "__main__":
+    batch_size,lr, num_epochs = 64, 0.1, 15
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     b1 = nn.Sequential(nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3),
                     nn.BatchNorm2d(64), nn.ReLU(),
                     nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
@@ -56,9 +59,7 @@ if __name__ == "__main__":
                         nn.AdaptiveAvgPool2d((1,1)),
                         nn.Flatten(), nn.Linear(512, 10))
 
-    lr, num_epochs, batch_size = 0.1, 15, 64
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     train_loader, test_loader = OM_reader.load_oracle_mnist_data(batch_size, resize=96)
-    OM_train_GPU(net, train_loader, test_loader, num_epochs, lr, device,ylim=[0,1])
+    OM_train_device(net, train_loader, test_loader, num_epochs, lr, device,ylim=[0,1])
     OM_predict(net, test_loader,device,size=96)
     plt.show()

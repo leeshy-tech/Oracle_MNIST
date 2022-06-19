@@ -2,9 +2,12 @@ import torch
 from torch import nn
 import OM_reader
 from matplotlib import pyplot as plt
-from multi_layer_perceptrons import OM_train_GPU,OM_predict
+from OM_train import OM_train_device,OM_predict
 
 if __name__ == "__main__":
+    batch_size,lr, num_epochs = 64, 0.1, 30
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     net = nn.Sequential(
         # 这里，我们使用一个11*11的更大窗口来捕捉对象。
         # 同时，步幅为4，以减少输出的高度和宽度。
@@ -30,10 +33,7 @@ if __name__ == "__main__":
         # 最后是输出层。由于这里使用Oracle-MNIST，所以用类别数为10，而非论文中的1000
         nn.Linear(4096, 10))
 
-    batch_size,lr, num_epochs = 64, 0.02, 30
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
     train_loader, test_loader = OM_reader.load_oracle_mnist_data(batch_size, resize=224)
-    OM_train_GPU(net, train_loader, test_loader, num_epochs, lr, device)
+    OM_train_device(net, train_loader, test_loader, num_epochs, lr, device,ylim=[0,1])
     OM_predict(net, test_loader,device,size=224)
     plt.show()

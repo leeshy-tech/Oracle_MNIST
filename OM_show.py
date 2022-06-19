@@ -43,10 +43,10 @@ def show_images(imgs, num_rows, num_cols, titles=None, scale=1.5):
     return axes
 
 if __name__ == "__main__":
-    train_loader,test_loader = OM_reader.load_oracle_mnist_data(18)
+    train_loader,test_loader = OM_reader.load_oracle_mnist_data(12)
 
     imgs,labels = next(iter(train_loader))
     print("imgs.shape:" + str(imgs.shape))
     print("labels.shape:" + str(labels.shape))
 
-    show_images(imgs.reshape(18, 28, 28), 2, 9, titles=get_oracle_mnist_labels(labels))
+    show_images(imgs.reshape(12, 28, 28), 4, 3, titles=get_oracle_mnist_labels(labels))

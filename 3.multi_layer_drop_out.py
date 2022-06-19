@@ -6,10 +6,10 @@ import OM_reader
 from torch import nn
 from d2l import torch as d2l
 from matplotlib import pyplot as plt
-from multi_layer_perceptrons import OM_train_GPU,OM_predict
+from OM_train import OM_train_device,OM_predict
 
 if __name__ == "__main__":
-    batch_size, lr, num_epochs = 256, 0.1, 100
+    batch_size, lr, num_epochs = 64, 0.1, 100
     dropout1, dropout2 = 0.2, 0.5
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -26,9 +26,7 @@ if __name__ == "__main__":
         nn.Linear(256, 10)
     )
 
-    trainer = torch.optim.SGD(net.parameters(), lr=lr)
-
     train_loader,test_loader = OM_reader.load_oracle_mnist_data(batch_size)
-    OM_train_GPU(net, train_loader, test_loader, num_epochs, lr, device)
+    OM_train_device(net, train_loader, test_loader, num_epochs, lr, device)
     OM_predict(net, test_loader,device)
     plt.show()
